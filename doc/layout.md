@@ -20,6 +20,7 @@ Layout
 | `tests/if/` | One-line `IF` test program, with reference output from QB64 |
 | `tests/data/` | `DATA` and `READ` test program, with reference output from QB64 |
 | `tests/names/` | Variable names with type suffixes (`k`, `k$`, `k%`), with reference output from QB64 |
+| `tests/functions/` | FUNCTIONs returning a `TYPE`, and `FUNCTION f AS type` without parentheses, with expected output checked by hand (QB64 can't run it) |
 | `tests/goto/` | `GOTO`, `GOSUB`, line number and `RESUME label` test programs, with reference output from QB64 |
 | `tests/records/` | Unit tests for `records.js` (`node tests/records/records-test.js`) |
 | `tests/viewprint/` | `VIEW PRINT` and bottom-line scrolling test programs, with reference output from QB64 |

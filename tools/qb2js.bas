@@ -4437,10 +4437,19 @@ Sub ConvertMethods ()
             AddJSLine methods(i).line, methodDec
             AddJSLine methods(i).line, "if (QB.halted()) { return; }; " + intConv
             If methods(i).type = "FUNCTION" Then
-                AddJSLine methods(i).line, "var " + RemoveSuffix(methods(i).name) + " = null;"
                 Dim fvar As Variable
                 fvar.name = RemoveSuffix(methods(i).name)
                 fvar.type = DataTypeFromName(methods(i).name)
+                fvar.fixedLen = ""
+                If FindTypeId(methods(i).returnType) > 0 Then
+                    ' qb64-ide: a FUNCTION ... AS a TYPE starts with an empty record of that
+                    ' TYPE, so f.x = ... works and a FUNCTION that never sets it returns zeros,
+                    ' as QBasic would. Other AS types are left as they were (not enforced).
+                    fvar.type = methods(i).returnType
+                    AddJSLine methods(i).line, "var " + RemoveSuffix(methods(i).name) + " = " + InitTypeValue(fvar.type, methods(i).line) + ";"
+                Else
+                    AddJSLine methods(i).line, "var " + RemoveSuffix(methods(i).name) + " = null;"
+                End If
                 AddVariable fvar, localVars()
             End If
             currentMethod = RemoveSuffix(methods(i).name)
@@ -5104,16 +5113,36 @@ Sub FindMethods
             Dim pstart As Integer
             Dim mname As String
             Dim pend
+            Dim mrtype As String ' qb64-ide: the type in "FUNCTION f (...) AS type", or ""
+            Dim mrest As String
+            mrtype = ""
             mstr = Join(parts(), 2, -1, " ")
             pstart = InStr(mstr, "(")
             If pstart = 0 Then
                 argstr = ""
                 mname = mstr
+                ' qb64-ide: FUNCTION f AS type, without parentheses: the name is the first word
+                If pcount >= 4 Then
+                    If UCase$(parts(3)) = "AS" Then
+                        mname = parts(2)
+                        mrtype = Join(parts(), 4, -1, " ")
+                    End If
+                End If
             Else
                 mname = String.Trim(Left$(mstr, pstart - 1))
                 mstr = Mid$(mstr, pstart + 1)
                 pend = _InStrRev(mstr, ")")
                 argstr = Left$(mstr, pend - 1)
+                mrest = String.Trim(Mid$(mstr, pend + 1))
+                If UCase$(Left$(mrest, 3)) = "AS " Then mrtype = String.Trim(Mid$(mrest, 4))
+            End If
+            If mrtype <> "" Then
+                mrtype = UCase$(mrtype)
+                If Left$(mrtype, 9) = "UNSIGNED " Or Left$(mrtype, 10) = "_UNSIGNED " Then
+                    mrtype = NormalizeType("_UNSIGNED " + String.Trim(Mid$(mrtype, InStr(mrtype, " ") + 1)))
+                Else
+                    mrtype = NormalizeType(mrtype)
+                End If
             End If
 
             ReDim As String arga(0)
@@ -5167,6 +5196,8 @@ Sub FindMethods
             End If
 
             AddMethod m, "", True
+            ' qb64-ide: the declared return type, if any (AddMethod takes it from the suffix)
+            If word = "FUNCTION" AndAlso mrtype <> "" Then methods(UBound(methods)).returnType = mrtype
         ElseIf word = "END" AndAlso UBound(parts) > 1 Then
             word = UCase$(parts(2))
             If word = "FUNCTION" Or word = "SUB" Then

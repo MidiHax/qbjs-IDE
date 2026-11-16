@@ -5502,10 +5502,16 @@ if (QB.halted()) { return; };
          await sub_AddJSLine( QB.arrayValue(methods, [ i]).value .line,    methodDec);
          await sub_AddJSLine( QB.arrayValue(methods, [ i]).value .line,   "if (QB.halted()) { return; }; "  +  intConv);
          if (QB.arrayValue(methods, [ i]).value .type ==  "FUNCTION" ) {
-            await sub_AddJSLine( QB.arrayValue(methods, [ i]).value .line,   "var "  + (await func_RemoveSuffix( QB.arrayValue(methods, [ i]).value .name))  + " = null;");
             var fvar = {type:'',name:'',jsname:'',isConst:0,isArray:0,arraySize:0,typeId:0,fixedLen:'',suffixed:0};  /* VARIABLE */ 
             fvar.name = (await func_RemoveSuffix( QB.arrayValue(methods, [ i]).value .name));
             fvar.type = (await func_DataTypeFromName( QB.arrayValue(methods, [ i]).value .name));
+            fvar.fixedLen = "";
+            if ((await func_FindTypeId( QB.arrayValue(methods, [ i]).value .returnType))  > 0) {
+               fvar.type = QB.arrayValue(methods, [ i]).value .returnType;
+               await sub_AddJSLine( QB.arrayValue(methods, [ i]).value .line,   "var "  + (await func_RemoveSuffix( QB.arrayValue(methods, [ i]).value .name))  + " = "  + (await func_InitTypeValue(  fvar.type,   QB.arrayValue(methods, [ i]).value .line))  + ";");
+            } else {
+               await sub_AddJSLine( QB.arrayValue(methods, [ i]).value .line,   "var "  + (await func_RemoveSuffix( QB.arrayValue(methods, [ i]).value .name))  + " = null;");
+            }
             await sub_AddVariable(  fvar,   localVars);
          }
          currentMethod = (await func_RemoveSuffix( QB.arrayValue(methods, [ i]).value .name));
@@ -6188,16 +6194,37 @@ if (QB.halted()) { return; };
          var pstart = 0;  /* INTEGER */ 
          var mname = '';  /* STRING */ 
          var pend = 0;  /* SINGLE */ 
+         var mrtype = '';  /* STRING */ 
+         var mrest = '';  /* STRING */ 
+         mrtype = "";
          mstr = (await func_Join( parts ,    2,    - 1,   " "));
          pstart = Math.round( (QB.func_InStr(  mstr,   "(")) );
          if ( pstart ==   0) {
             argstr = "";
             mname =  mstr;
+            if ( pcount >=  4) {
+               if ((QB.func_UCase( QB.arrayValue(parts, [ 3]).value))  ==  "AS" ) {
+                  mname = QB.arrayValue(parts, [ 2]).value;
+                  mrtype = (await func_Join( parts ,    4,    - 1,   " "));
+               }
+            }
          } else {
             mname = (await String.func_Trim( (QB.func_Left(  mstr,    pstart -  1))));
             mstr = (QB.func_Mid(  mstr,    pstart +  1));
             pend = (QB.func__InStrRev(  mstr,   ")"));
             argstr = (QB.func_Left(  mstr,    pend -  1));
+            mrest = (await String.func_Trim( (QB.func_Mid(  mstr,    pend +  1))));
+            if ((QB.func_UCase( (QB.func_Left(  mrest,    3))))  ==  "AS " ) {
+               mrtype = (await String.func_Trim( (QB.func_Mid(  mrest,    4))));
+            }
+         }
+         if ( mrtype !=  "" ) {
+            mrtype = (QB.func_UCase(  mrtype));
+            if ((QB.func_Left(  mrtype,    9))  ==  "UNSIGNED "  | (QB.func_Left(  mrtype,    10))  ==  "_UNSIGNED " ) {
+               mrtype = (await func_NormalizeType( "_UNSIGNED "  + (await String.func_Trim( (QB.func_Mid(  mrtype,   (QB.func_InStr(  mrtype,   " "))  +  1))))));
+            } else {
+               mrtype = (await func_NormalizeType(  mrtype));
+            }
          }
          var arga = QB.initArray([{l:0,u: 0}], '');  /* STRING */ 
          var m = {line:0,lastLine:0,type:'',returnType:'',name:'',uname:'',argc:0,args:'',jsname:'',sync:0,builtin:0,dynamic:0};  /* METHOD */ 
@@ -6247,6 +6274,9 @@ if (QB.halted()) { return; };
             m.args =  args;
          }
          await sub_AddMethod(  m,   "" ,    True);
+         if ( word ==  "FUNCTION"  &&  mrtype !=  "" ) {
+            QB.arrayValue(methods, [(QB.func_UBound(  methods))]).value .returnType =  mrtype;
+         }
       } else if ( word ==  "END"  && (QB.func_UBound(  parts))  > 1) {
          word = (QB.func_UCase( QB.arrayValue(parts, [ 2]).value));
          if ( word ==  "FUNCTION"  |  word ==  "SUB" ) {

@@ -1,0 +1,17 @@
+Expected output, checked by hand against QBasic's rules (QB64 can't run fn1.bas).
+
+== fn1
+1: 11  12  1  2 
+1 copy: 99  11  1 
+2: 4 -2 
+3: 0  0 
+3 partly: 7  0 
+4: 1  2 
+5: 0  0  4  4 [diago] 5 
+6: 1  0 
+6 late: 1  2 
+7 sub: 8  9 
+7: 6 
+8: 5  6  6 
+8 type: 0  0 
+8 unsigned: 4000000000  65535 
