@@ -1,0 +1,20 @@
+Reference results from QB64 (C:/Program Files/qb64), built with $CONSOLE:ONLY and SYSTEM added.
+
+== i1
+[007]
+[077]
+c-1 
+one
+two
+threebig
+fourbig
+f 0 pe 0 
+dly 100 
+a: IF b THEN c ELSE d
+second
+diff 6  7 
+else part
+still else
+n 6 
+block if after colon
+end

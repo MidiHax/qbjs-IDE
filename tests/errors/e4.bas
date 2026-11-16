@@ -1,0 +1,9 @@
+ON ERROR GOTO h
+PRINT "a"
+ERROR 70
+PRINT "b"
+END
+h:
+PRINT "in handler"
+ERROR 71
+RESUME NEXT

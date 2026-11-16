@@ -1,0 +1,13 @@
+Reference results from QB64 (C:/Program Files/qb64), built with $CONSOLE:ONLY and SYSTEM added.
+
+== d1
+[Clothes][Chain  Mail][  quoted, with comma ]
+ 42 [42][-3.5E2]
+[] 0  0 
+[Loucas' sword][colon: here]
+ 31 [&H1F] 25 
+[rem is data]
+[a][b]
+ 2  4 
+[..\E001\NEW-MEAT][C:\EAMONDX\]
+[Plate Mail] 7 

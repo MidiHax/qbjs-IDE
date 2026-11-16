@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Relative URLs start from the project root, as in the IDE: the engine scripts, Import "lib/...",
+     and the GX font images (gx/...). -->
+<base href="../">
+<title>QBasic program</title>
+<link rel="stylesheet" href="embed/player.css">
+</head>
+<body>
+<!-- The embedded QBJS player: shows only the program's screen. It is driven by messages from the
+     page that embeds it (see embed/player.js and doc/embedding.md). -->
+<div id="gx-container" tabindex="0"></div>
+<div id="gx-footer" hidden></div>
+<button type="button" id="cover" hidden><span class="play" aria-hidden="true"></span><span id="cover-text">Run</span></button>
+<div id="notice" role="status" hidden></div>
+<div id="error" role="alert" hidden></div>
+<div id="bar" hidden>
+  <span id="bar-title"></span>
+  <button type="button" id="bar-run" title="Run">&#9654; Run</button>
+  <button type="button" id="bar-stop" title="Stop">&#9632; Stop</button>
+  <button type="button" id="bar-restart" title="Restart">&#8635; Restart</button>
+  <button type="button" id="bar-full" title="Full screen" aria-label="Full screen">&#x26F6;</button>
+</div>
+<script src="embed/player.js"></script>
+</body>
+</html>

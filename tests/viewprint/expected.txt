@@ -1,0 +1,350 @@
+Expected output, from QB64 2.1 (each program writes what SCREEN() reads back, so the files can be compared
+line by line). Run a program on the Code tab, then open its file from the Files tab.
+
+--- viewprint.bas -> VP.TXT
+== 1: VIEW PRINT 3 TO 23 on a full screen | CSRLIN 3 POS 1 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|row 3 CCCCC
+ 4|row 4 DDDDD
+ 5|row 5 EEEEE
+ 6|row 6 FFFFF
+ 7|row 7 GGGGG
+ 8|row 8 HHHHH
+ 9|row 9 IIIII
+10|row 10 JJJJJ
+11|row 11 KKKKK
+12|row 12 LLLLL
+13|row 13 MMMMM
+14|row 14 NNNNN
+15|row 15 OOOOO
+16|row 16 PPPPP
+17|row 17 QQQQQ
+18|row 18 RRRRR
+19|row 19 SSSSS
+20|row 20 TTTTT
+21|row 21 UUUUU
+22|row 22 VVVVV
+23|row 23 WWWWW
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 2: 30 lines scroll inside rows 3-23 | CSRLIN 23 POS 1 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|L 11 3 MMMMM
+ 4|L 12 4 NNNNN
+ 5|L 13 5 OOOOO
+ 6|L 14 6 PPPPP
+ 7|L 15 7 QQQQQ
+ 8|L 16 8 RRRRR
+ 9|L 17 9 SSSSS
+10|L 18 0 TTTTT
+11|L 19 1 UUUUU
+12|L 20 2 VVVVV
+13|L 21 3 WWWWW
+14|L 22
+15|L 23
+16|L 24
+17|L 25
+18|L 26
+19|L 27
+20|L 28
+21|L 29
+22|L 30
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 3: LOCATE 1, 1 outside the window | CSRLIN 23 POS 1 ERR 5 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|L 11 3 MMMMM
+ 4|L 12 4 NNNNN
+ 5|L 13 5 OOOOO
+ 6|L 14 6 PPPPP
+ 7|L 15 7 QQQQQ
+ 8|L 16 8 RRRRR
+ 9|L 17 9 SSSSS
+10|L 18 0 TTTTT
+11|L 19 1 UUUUU
+12|L 20 2 VVVVV
+13|L 21 3 WWWWW
+14|L 22
+15|L 23
+16|L 24
+17|L 25
+18|L 26
+19|L 27
+20|L 28
+21|L 29
+22|L 30
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 4: LOCATE 10, 5 inside the window | CSRLIN 10 POS 8 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|L 11 3 MMMMM
+ 4|L 12 4 NNNNN
+ 5|L 13 5 OOOOO
+ 6|L 14 6 PPPPP
+ 7|L 15 7 QQQQQ
+ 8|L 16 8 RRRRR
+ 9|L 17 9 SSSSS
+10|L 18tenTTTTT
+11|L 19 1 UUUUU
+12|L 20 2 VVVVV
+13|L 21 3 WWWWW
+14|L 22
+15|L 23
+16|L 24
+17|L 25
+18|L 26
+19|L 27
+20|L 28
+21|L 29
+22|L 30
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 5: a 100-character line wraps and scrolls at the bottom of the window | CSRLIN 23 POS 1 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|L 13 5 OOOOO
+ 4|L 14 6 PPPPP
+ 5|L 15 7 QQQQQ
+ 6|L 16 8 RRRRR
+ 7|L 17 9 SSSSS
+ 8|L 18tenTTTTT
+ 9|L 19 1 UUUUU
+10|L 20 2 VVVVV
+11|L 21 3 WWWWW
+12|L 22
+13|L 23
+14|L 24
+15|L 25
+16|L 26
+17|L 27
+18|L 28
+19|L 29
+20|L 30
+21|wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+22|wwwwwwwwwwwwwwwwwwww
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 6: CLS 2 clears only the window | CSRLIN 3 POS 1 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 7: VIEW PRINT with no rows | CSRLIN 1 POS 1 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|after CLS 2
+24|row 24 XXXXX
+25|row 25 YYYYY
+== 8: LOCATE 25 after VIEW PRINT | CSRLIN 25 POS 7 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|after CLS 2
+24|row 24 XXXXX
+25|bottom YYYYY
+== 9: VIEW PRINT 20 TO 25, PRINT on row 25 | CSRLIN 25 POS 2 ERR 0 
+ 1|row 1 AAAAA
+ 2|row 2 BBBBB
+ 3|after CLS 2
+23|row 24 XXXXX
+24|xottom YYYYY
+25|y
+== 10: CLS with a window | CSRLIN 2 POS 1 ERR 0 
+ 1|row 1 AAAAA
+23|row 24 XXXXX
+24|xottom YYYYY
+== 11: CLS 0 with a window | CSRLIN 2 POS 1 ERR 0 
+== 12: VIEW PRINT 0 TO 5 | CSRLIN 2 POS 1 ERR 5 
+== 13: VIEW PRINT 10 TO 5 | CSRLIN 2 POS 1 ERR 5 
+== 14: VIEW PRINT with expressions | CSRLIN 6 POS 1 ERR 0 
+ 5|in 5-12
+== 15: cursor above the new window | CSRLIN 12 POS 1 ERR 0 
+ 1|one
+ 5|in 5-12
+== 16: PRINT after that | CSRLIN 13 POS 1 ERR 0 
+ 1|one
+ 5|in 5-12
+12|p
+
+--- bottomline.bas -> BOTTOM.TXT
+== CSRLIN 24 POS 1 
+ 1|row 2
+ 2|row 3
+ 3|row 4
+ 4|row 5
+ 5|row 6
+ 6|row 7
+ 7|row 8
+ 8|row 9
+ 9|row 10
+10|row 11
+11|row 12
+12|row 13
+13|row 14
+14|row 15
+15|row 16
+16|row 17
+17|row 18
+18|row 19
+19|row 20
+20|row 21
+21|row 22
+22|row 23
+23|row 24
+25|xow 25
+== CSRLIN 24 POS 1 
+ 1|row 2
+ 2|row 3
+ 3|row 4
+ 4|row 5
+ 5|row 6
+ 6|row 7
+ 7|row 8
+ 8|row 9
+ 9|row 10
+10|row 11
+11|row 12
+12|row 13
+13|row 14
+14|row 15
+15|row 16
+16|row 17
+17|row 18
+18|row 19
+19|row 20
+20|row 21
+21|row 22
+22|row 23
+23|row 24
+25|xyw 25
+== CSRLIN 24 POS 1 
+ 1|row 2
+ 2|row 3
+ 3|row 4
+ 4|row 5
+ 5|row 6
+ 6|row 7
+ 7|row 8
+ 8|row 9
+ 9|row 10
+10|row 11
+11|row 12
+12|row 13
+13|row 14
+14|row 15
+15|row 16
+16|row 17
+17|row 18
+18|row 19
+19|row 20
+20|row 21
+21|row 22
+22|row 23
+23|aow 24
+25|row 25
+== CSRLIN 25 POS 1 
+ 1|v 7 7
+ 2|v 8 8
+ 3|v 9 9
+ 4|v 10 0
+ 5|v 11 1
+ 6|v 12 2
+ 7|v 13 3
+ 8|v 14 4
+ 9|v 15 5
+10|v 16 6
+11|v 17 7
+12|v 18 8
+13|v 19 9
+14|v 20 0
+15|v 21 1
+16|v 22 2
+17|v 23 3
+18|v 24 4
+19|v 25 5
+20|v 26
+21|v 27
+22|v 28
+23|v 29
+24|v 30
+== CSRLIN 25 POS 1 
+ 1|f 7 7
+ 2|f 8 8
+ 3|f 9 9
+ 4|f 10 0
+ 5|f 11 1
+ 6|f 12 2
+ 7|f 13 3
+ 8|f 14 4
+ 9|f 15 5
+10|f 16 6
+11|f 17 7
+12|f 18 8
+13|f 19 9
+14|f 20 0
+15|f 21 1
+16|f 22 2
+17|f 23 3
+18|f 24 4
+19|f 25 5
+20|f 26
+21|f 27
+22|f 28
+23|f 29
+24|f 30
+== CSRLIN 25 POS 1 
+ 1|after reset 7
+ 2|after reset 8
+ 3|after reset 9
+ 4|after reset 10
+ 5|after reset 11
+ 6|after reset 12
+ 7|after reset 13
+ 8|after reset 14
+ 9|after reset 15
+10|after reset 16
+11|after reset 17
+12|after reset 18
+13|after reset 19
+14|after reset 20
+15|after reset 21
+16|after reset 22
+17|after reset 23
+18|after reset 24
+19|after reset 25
+20|after reset 26
+21|after reset 27
+22|after reset 28
+23|after reset 29
+24|after reset 30
+
+--- longline.bas -> LONG.TXT
+ 24  4 
+ 1|n 10
+ 2|n 11
+ 3|n 12
+ 4|n 13
+ 5|n 14
+ 6|n 15
+ 7|n 16
+ 8|n 17
+ 9|n 18
+10|n 19
+11|n 20
+12|n 21
+13|n 22
+14|n 23
+15|n 24
+16|n 25
+17|n 26
+18|n 27
+19|n 28
+20|n 29
+21|n 30
+22|wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+23|wwwwwwwwwwwwwwwwwwww
+24|end
+25|

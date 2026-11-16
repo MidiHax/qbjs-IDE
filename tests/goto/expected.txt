@@ -1,0 +1,46 @@
+Reference results from QB64 (C:/Program Files/qb64), built with $CONSOLE:ONLY added and END changed to SYSTEM.
+
+== g1
+numbered
+N = 3 
+sub 1000
+one
+two
+three
+from 9000
+== g2
+found 2  3 
+one
+two-three
+two-three
+else 4 
+else 5 
+big
+total 15 
+w 1 
+w 3 
+w 4 
+x 3 
+x 0 
+x 2 
+if
+c 1 
+c 2 
+c 3 
+fact 120 
+outer
+inner
+back in outer
+end
+== g3
+try 1 
+handler 70 
+try 2 
+handler 70 
+try 3 
+ok after 3 
+deep
+handler 53 
+recovered
+in s1
+end

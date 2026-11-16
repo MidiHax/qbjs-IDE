@@ -1,0 +1,85 @@
+Reference results from QB64 (C:/Program Files/qb64), built with $CONSOLE:ONLY added as line 1
+and END changed to SYSTEM. Because of the extra line, QB64 printed _ERRORLINE values one higher;
+they are adjusted here to the line numbers of the .bas files.
+
+== e1
+start
+handler 53  4 
+after open 0 
+handler 200  6 
+after error 200
+handler 201  9 
+handler 201  9 
+handler 201  9 
+retried 3 
+handler 202  11 
+x = 2 
+inner a
+handler 206  44 
+inner b
+after inner
+handler 203  16 
+in if
+loop 1 
+handler 204  20 
+loop 2 
+loop 3 
+other 205 
+line 24 
+done
+== e2
+h 99 Unprintable error
+in twice
+y = 11 
+h 4 Out of DATA
+read 1  2  0 
+File not found|Input past end of file
+h 53 File not found
+err after resume 0 
+h 7 Out of memory
+unreachable
+== e3
+a
+handler, no resume 70 
+== e4
+a
+in handler
+== e5
+a
+ending in handler
+(e4: QB64 stops at the error inside the handler. The IDE stops with "Disk not ready" on line 8.)
+
+== e6
+total 6 
+j 1 
+j 2 
+after
+err 5 
+loop done
+end
+== e7 (IDE only: compiles with warnings for the FIELD and screen GET/PUT lines, then prints)
+still running
+== e8
+start
+handler 53 
+choice 1 
+after first error
+shared routine
+handler 70 
+choice 2 
+shared routine
+after second error 2 
+handler 71 
+choice 1 
+in sub after error
+end 3 
+== e9
+wrong screen mode
+trap 99 
+after 99
+tail
+== e10
+h 5 
+fell into nextpart
+finish
+resumed here

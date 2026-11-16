@@ -1,0 +1,30 @@
+Expected output in the IDE. QB64 can't run this set the same way, because RUN here uses the IDE's file system.
+Upload the whole run/ folder (with its MAIN/ subfolder) on the Files tab, then run the programs in this order.
+
+== start.bas (runs MAIN/FRNTDESK.BAS, which runs END.BAS)
+start
+front desk
+n 42
+hello from data.txt
+error 53
+after missing file
+the end, n = 0 (variables start again)
+{ 42 }
+{ 7 }
+
+== count.bas (RUN with no name restarts the program)
+run 1
+run 2
+run 3
+done
+
+== files.bas
+error 76
+done
+Afterwards MAIN/ holds NAME.DAT (now " 5") and sub/x.txt ("in sub"), and no second name.dat.
+
+== errrun.bas
+before
+error 53 - running END.BAS
+the end, n = 0 (variables start again)
+{ 5 }

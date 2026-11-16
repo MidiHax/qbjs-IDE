@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QBasic Embedding Demo</title>
+<!-- Every way of putting a QBasic program on a web page. Each live example is followed by the
+     HTML that makes it (copied from the page itself by the script at the bottom).
+     How it works and every option: doc/embedding.md. -->
+<script src="qb-embed.js" defer></script>
+<!-- only for the share-link maker at the end; the player needs nothing on this page -->
+<script src="../qbjs/util/pako.2.1.0.min.js" defer></script>
+<style>
+:root {
+  --bg: #f6f6f3;
+  --panel: #ffffff;
+  --text: #1d1d1f;
+  --muted: #5d5d66;
+  --line: #d9d9de;
+  --code-bg: #f0f0ec;
+  --accent: #2456c9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141417;
+    --panel: #1c1c21;
+    --text: #e8e8ec;
+    --muted: #a0a0aa;
+    --line: #34343c;
+    --code-bg: #232329;
+    --accent: #7ea2ff;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; }
+h2 { font-size: 21px; margin: 48px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+.lead { color: var(--muted); font-size: 17px; }
+nav ol { margin: 8px 0 0; padding-left: 22px; }
+code { font: 14px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; }
+:not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre {
+  margin: 12px 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.live { margin: 16px 0 0; }
+qb-program, .live iframe { display: block; max-width: 100%; }
+.live iframe { border: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+button {
+  font: inherit;
+  font-size: 15px;
+  padding: 6px 14px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+textarea, input[type=text] {
+  width: 100%;
+  font: 14px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+textarea { min-height: 150px; resize: vertical; }
+#log {
+  height: 150px;
+  overflow-y: auto;
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  list-style: none;
+  font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+#log b { color: var(--accent); font-weight: 600; }
+.note { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<h1>QBasic programs on any web page</h1>
+<p class="lead">Each example below runs a QBasic program in a sandboxed frame that shows only its
+screen. The HTML under each one is everything it takes. The full guide is
+<code>doc/embedding.md</code>.</p>
+<nav><ol>
+  <li><a href="#inline">The program written in the page</a></li>
+  <li><a href="#src">A <code>.bas</code> file</a></li>
+  <li><a href="#package">A package (<code>.zip</code>) whose files are kept</a></li>
+  <li><a href="#script">Driving it from JavaScript</a></li>
+  <li><a href="#iframe">A plain <code>&lt;iframe&gt;</code>, with no script</a></li>
+  <li><a href="#link">A shareable link</a></li>
+</ol></nav>
+
+<!-- ------------------------------------------------------------------ 1 -->
+<h2 id="inline">1. The program written in the page</h2>
+<p>Put the program inside <code>&lt;qb-program&gt;</code>, in a
+<code>&lt;script type="text/x-qbasic"&gt;</code> so that <code>&lt;</code> and <code>&amp;</code>
+need no escaping. Without <code>autostart</code> the reader presses Run first. Click the screen
+to type into it.</p>
+<div class="live" data-snippet>
+<qb-program width="640" height="400" controls>
+<script type="text/x-qbasic">
+_TITLE "Hello"
+COLOR 11
+PRINT "QBasic, running in this page."
+PRINT
+COLOR 7
+INPUT "What is your name"; n$
+FOR i = 1 TO 15
+    COLOR i
+    PRINT SPACE$(i); "Hello, "; n$; "!"
+NEXT
+</script>
+</qb-program>
+</div>
+<pre><code></code></pre>
+
+<!-- ------------------------------------------------------------------ 2 -->
+<h2 id="src">2. A <code>.bas</code> file</h2>
+<p><code>src</code> names a file to fetch. A relative URL is relative to this page; a file on
+another site needs that site to allow it (CORS). The screen is scaled to fit the box.</p>
+<div class="live" data-snippet>
+<qb-program src="demo/bounce.bas" width="640" height="400" autostart></qb-program>
+</div>
+<pre><code></code></pre>
+
+<!-- ------------------------------------------------------------------ 3 -->
+<h2 id="package">3. A package whose files are kept</h2>
+<p>A <code>.zip</code> holds the program and its files. Its <code>qbjs.json</code> names the
+program to run, a title and the <code>COMMAND$</code> arguments. With <code>persist</code>, the
+files the program writes are kept in this browser under that key and given back next time:
+run it, reload the page, and run it again.
+(The zip holds <a href="demo/visits/visits.bas">visits.bas</a>,
+<a href="demo/visits/banner.txt">banner.txt</a> and <a href="demo/visits/qbjs.json">qbjs.json</a>.)</p>
+<div class="live" data-snippet>
+<qb-program src="demo/visits.zip" persist="visits-demo" width="640" height="300" controls></qb-program>
+</div>
+<pre><code></code></pre>
+<div class="row"><button type="button" id="forget">Forget the kept files</button>
+<span class="note" id="forget-note"></span></div>
+
+<!-- ------------------------------------------------------------------ 4 -->
+<h2 id="script">4. Driving it from JavaScript</h2>
+<p>The element has methods (<code>load</code>, <code>run</code>, <code>stop</code>,
+<code>readFile</code>, <code>writeFile</code>, <code>fullscreen</code>) and fires events
+(<code>qb-start</code>, <code>qb-end</code>, <code>qb-error</code>, <code>qb-message</code> for
+<code>_ECHO</code>, <code>qb-title</code>, <code>qb-resize</code>...). Edit the program and load
+it; try a mistake to see the error event.</p>
+<div class="live">
+<qb-program id="lab" width="640" height="400"></qb-program>
+</div>
+<textarea id="lab-source" spellcheck="false" aria-label="Program">_TITLE "Circles"
+SCREEN 12
+FOR r = 10 TO 230 STEP 10
+    CIRCLE (320, 240), r, (r \ 10) MOD 15 + 1
+    _LIMIT 20
+NEXT
+_ECHO "drew" + STR$(r \ 10 - 1) + " circles"
+PRINT "Done."</textarea>
+<div class="row">
+  <button type="button" id="lab-load">Load and run</button>
+  <button type="button" id="lab-stop">Stop</button>
+  <button type="button" id="lab-clear">Clear log</button>
+</div>
+<ol id="log" aria-label="Events"></ol>
+<pre><code>const lab = document.getElementById('lab');
+lab.addEventListener('qb-message', (e) =&gt; console.log(e.detail.message));
+lab.addEventListener('qb-end', (e) =&gt; console.log('ended:', e.detail.reason));
+await lab.load({ source: text, name: 'circles.bas' });
+lab.run();</code></pre>
+
+<!-- ------------------------------------------------------------------ 5 -->
+<h2 id="iframe">5. A plain <code>&lt;iframe&gt;</code>, with no script</h2>
+<p>Where a page can't run scripts (some blogs, wikis and forums), point an
+<code>&lt;iframe&gt;</code> at <code>embed/player.html</code> and give the settings in its
+URL. Here a relative <code>src</code> is relative to the engine's folder (where
+<code>index.html</code> is), not this page. Keep the <code>sandbox</code> attribute: it is
+what keeps the program away from the page.</p>
+<div class="live" data-snippet>
+<iframe src="player.html?src=embed/demo/bounce.bas&amp;autostart&amp;controls"
+        width="640" height="430" sandbox="allow-scripts allow-pointer-lock"
+        allow="fullscreen; gamepad; autoplay" title="Bounce"></iframe>
+</div>
+<pre><code></code></pre>
+
+<!-- ------------------------------------------------------------------ 6 -->
+<h2 id="link">6. A shareable link</h2>
+<p>A short program fits in the link itself: <code>#code=</code> holds the program, compressed
+and encoded. Opened on its own, the link fills the window; it also works as an
+<code>&lt;iframe&gt;</code> <code>src</code>. Nothing is stored on a server.</p>
+<textarea id="link-source" spellcheck="false" aria-label="Program for the link">_TITLE "Spiral"
+SCREEN 13
+FOR a = 0 TO 60 STEP .05
+    PSET (160 + COS(a) * a * 1.5, 100 + SIN(a) * a * 1.5), 32 + (a * 3) MOD 72
+    _LIMIT 600
+NEXT
+PRINT "Made from a link"</textarea>
+<div class="row">
+  <button type="button" id="link-make">Make the link</button>
+  <a id="link-open" href="#" target="_blank" rel="noopener" hidden>Open it in a new tab</a>
+  <span class="note" id="link-length"></span>
+</div>
+<input type="text" id="link-out" readonly aria-label="Link" placeholder="The link appears here">
+<div class="live" id="link-preview"></div>
+</main>
+
+<script>
+// Shows each example's own HTML in the <pre> after it. This runs before qb-embed.js (deferred),
+// so the markup is still exactly as written.
+for (const live of document.querySelectorAll('.live[data-snippet]')) {
+  // (innerHTML writes a bare attribute as controls="", so put those back as written)
+  const html = live.innerHTML.replace(/^\n+|\s+$/g, '').replace(/ ([\w-]+)=""/g, ' $1');
+  live.nextElementSibling.querySelector('code').textContent = html;
+}
+
+addEventListener('DOMContentLoaded', () => {
+  const $ = (id) => document.getElementById(id);
+
+  // 3. forget the files the package example kept
+  const pkg = document.querySelector('qb-program[persist]');
+  $('forget').onclick = async () => {
+    await pkg.clearSaved();
+    $('forget-note').textContent = 'Forgotten: the next run counts from 1.';
+  };
+
+  // 4. the scripted example
+  const lab = $('lab');
+  const log = $('log');
+  const show = (name, text) => {
+    const li = document.createElement('li');
+    const b = document.createElement('b');
+    b.textContent = name;
+    li.append(b, ' ' + text);
+    log.append(li);
+    log.scrollTop = log.scrollHeight;
+  };
+  const events = {
+    'qb-ready': (d) => d.path,
+    'qb-start': (d) => d.path,
+    'qb-end': (d) => d.reason,
+    'qb-error': (d) => `${d.phase}, line ${d.line}: ${d.message}`,
+    'qb-message': (d) => d.message,
+    'qb-resize': (d) => `${d.width} x ${d.height}`,
+    'qb-title': (d) => d.title,
+  };
+  for (const [name, describe] of Object.entries(events)) {
+    lab.addEventListener(name, (e) => show(name, describe(e.detail)));
+  }
+  $('lab-load').onclick = async () => {
+    try {
+      await lab.load({ source: $('lab-source').value, name: 'circles.bas' });
+      lab.run();
+    } catch (err) {
+      show('load failed', err.message);
+    }
+  };
+  $('lab-stop').onclick = () => lab.stop();
+  $('lab-clear').onclick = () => { log.textContent = ''; };
+  lab.load({ source: $('lab-source').value, name: 'circles.bas' }).catch(() => {});
+
+  // 6. the share-link maker
+  function encodeCode(text) {
+    const bytes = pako.deflateRaw(new TextEncoder().encode(text));
+    let bin = '';
+    for (const b of bytes) bin += String.fromCharCode(b);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  $('link-make').onclick = () => {
+    const engine = new URL('player.html', location.href).href;
+    const link = engine + '#autostart&controls&code=' + encodeCode($('link-source').value);
+    $('link-out').value = link;
+    $('link-open').href = link;
+    $('link-open').hidden = false;
+    $('link-length').textContent = link.length + ' characters';
+    const frame = document.createElement('iframe');
+    frame.src = link;
+    frame.width = 640;
+    frame.height = 430;
+    frame.title = 'Preview of the link';
+    frame.setAttribute('sandbox', 'allow-scripts allow-pointer-lock');
+    frame.setAttribute('allow', 'fullscreen; gamepad; autoplay');
+    $('link-preview').replaceChildren(frame);
+  };
+});
+</script>
+</body>
+</html>

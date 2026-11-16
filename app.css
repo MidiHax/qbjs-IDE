@@ -1,0 +1,294 @@
+/* QB64 IDE layout on top of crt.css */
+
+@font-face { font-family: dosvga;  src: url(qbjs/qbjs.woff2); }
+@font-face { font-family: dosvga8; src: url(qbjs/fonts/WebPlus_IBM_EGA_8x8.woff); }
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  display: flex; flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+a { color: var(--crt-acc); }
+a:hover { color: var(--crt-acc-lt); }
+code { color: var(--crt-acc-br); }
+[hidden] { display: none !important; }
+
+/* ---------- header and tab bar ---------- */
+.app-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 8px 16px;
+}
+.app-header h1 { margin: 0; font-size: 28px; line-height: 1; }
+.app-status { display: flex; align-items: center; gap: 8px; min-width: 0; }
+#file-badge { max-width: 50vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: none; }
+
+.app-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 16px 0;
+}
+.app-tabs, .app-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.app-tab[aria-selected="true"] {
+  border-color: var(--crt-shadow) var(--crt-bevel) var(--crt-bevel) var(--crt-shadow);
+  box-shadow: none; transform: translate(1px, 1px);
+  color: var(--crt-acc-lt); background: var(--crt-bg-head);
+}
+/* include tabs (opened from the outline): amber, so they stand apart from the standard tabs */
+.app-tab-inc {
+  gap: 6px; padding: 0 6px 0 10px; text-transform: none; letter-spacing: .02em;
+  color: var(--crt-led);
+  background: color-mix(in srgb, var(--crt-led) 14%, var(--crt-btn-face));
+}
+.app-tab-inc:hover { color: color-mix(in srgb, var(--crt-led) 70%, #fff); }
+.app-tab.app-tab-inc[aria-selected="true"] {
+  color: color-mix(in srgb, var(--crt-led) 70%, #fff);
+  background: color-mix(in srgb, var(--crt-led) 26%, var(--crt-bg-head));
+}
+.app-tab-x { padding: 0 4px; font-size: 15px; line-height: 1; opacity: .65; }
+.app-tab-x:hover { opacity: 1; color: var(--crt-danger); }
+.app-count {
+  display: inline-block; min-width: 18px; padding: 0 4px;
+  background: var(--crt-danger); color: #000; font-size: 10px; line-height: 16px; text-align: center;
+}
+.app-count.warn { background: var(--crt-led); }
+.app-sep { width: 1px; height: 22px; background: var(--crt-line); margin: 0 4px; }
+
+/* ---------- panels ---------- */
+.app-main {
+  flex: 1; min-height: 0;
+  padding: 10px 16px 14px;
+  display: flex;
+}
+.app-panel {
+  flex: 1; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column;
+}
+.app-subbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 8px 10px;
+  background: var(--crt-bg-head);
+  border-bottom: 1px solid var(--crt-shadow);
+}
+.app-grow { flex: 1; }
+.app-scroll { flex: 1; min-height: 0; overflow: auto; padding: 12px 14px; }
+.app-empty, .app-note { color: var(--crt-ink-3); }
+.app-note { font-size: 12px; margin-top: 16px; }
+.app-error { color: var(--crt-danger); margin: 8px 0 0; }
+
+/* ---------- editors ---------- */
+.app-editor { flex: 1; min-height: 0; position: relative; }
+.app-editor .CodeMirror {
+  position: absolute; inset: 0; height: auto;
+  font-family: var(--crt-font-body); font-size: 15px; line-height: 1.45;
+  background: var(--crt-bg-well); color: var(--crt-ink-2);
+}
+.CodeMirror-gutters { background: var(--crt-bg-1); border-right: 1px solid var(--crt-line); }
+.CodeMirror-linenumber { color: var(--crt-acc-dim); }
+.CodeMirror-cursor { border-left: 2px solid var(--crt-acc-br); }
+.CodeMirror-selected, .CodeMirror-focused .CodeMirror-selected,
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: var(--crt-sel-bg) !important; }
+.CodeMirror-activeline-background { background: color-mix(in srgb, var(--crt-acc) 7%, transparent); }
+.CodeMirror-activeline-gutter { background: var(--crt-bg-2); }
+.CodeMirror-readonly .CodeMirror-cursor { display: none; }
+.cm-s-crt .cm-keyword  { color: var(--crt-acc-br); font-weight: 700; }
+.cm-s-crt .cm-builtin  { color: var(--crt-acc); }
+.cm-s-crt .cm-variable { color: var(--crt-ink); }
+.cm-s-crt .cm-string   { color: var(--crt-led); }
+.cm-s-crt .cm-number   { color: #9fe3a5; }
+.cm-s-crt .cm-atom     { color: #9fe3a5; }
+.cm-s-crt .cm-comment  { color: var(--crt-acc-dim); font-style: italic; }
+.cm-s-crt .cm-operator { color: var(--crt-ink-3); }
+.cm-s-crt .cm-bracket  { color: var(--crt-ink-3); }
+.cm-error-line { background: color-mix(in srgb, var(--crt-danger) 18%, transparent); }
+/* debugger: breakpoint gutter, the line about to run, the step buttons */
+.qb-breakpoints { width: 14px; cursor: pointer; }
+.CodeMirror-linenumber { cursor: pointer; }
+.qb-bp-dot { width: 9px; height: 9px; margin: 4px 0 0 3px; border-radius: 50%;
+  background: var(--crt-danger); box-shadow: 0 0 4px color-mix(in srgb, var(--crt-danger) 70%, transparent); }
+.CodeMirror .cm-debug-line { background: color-mix(in srgb, var(--crt-led) 26%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--crt-led) 60%, transparent); }
+.cm-debug-gutter { background: color-mix(in srgb, var(--crt-led) 40%, transparent); }
+.app-dbg { display: inline-flex; gap: 6px; }
+.app-dbg[hidden] { display: none; }
+.CodeMirror-dialog { background: var(--crt-bg-head); color: var(--crt-ink); }
+.CodeMirror-dialog input { color: var(--crt-ink); font-family: inherit; }
+.cm-searching { background: color-mix(in srgb, var(--crt-led) 35%, transparent); }
+
+/* ---------- outline (Code tab, right-hand pane) ---------- */
+.app-code { flex: 1; min-height: 0; display: flex; position: relative; }
+.app-outline {
+  flex: none; width: 260px; min-height: 0;
+  display: flex; flex-direction: column;
+  background: var(--crt-bg-1); border-left: 1px solid var(--crt-line);
+}
+.app-outline[hidden] { display: none; }
+.app-outline-head {
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+  background: var(--crt-bg-head); border-bottom: 1px solid var(--crt-shadow);
+}
+.app-outline-count { color: var(--crt-ink-3); font-size: 11px; }
+.app-outline-x { height: 22px; padding: 0 8px; font-size: 14px; line-height: 1; }
+.app-outline-filter { flex: none; width: auto; height: 26px; margin: 6px 8px 4px; }
+.app-outline-list { flex: 1; min-height: 0; overflow: auto; padding: 2px 0 10px; font-size: 13px; }
+.ol-group {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  margin-top: 6px; padding: 3px 8px; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--crt-acc);
+  text-align: left;
+}
+.ol-group::before { content: '\25BE'; width: 10px; color: var(--crt-acc-dim); }
+.ol-group[aria-expanded="false"]::before { content: '\25B8'; }
+.ol-group:hover { color: var(--crt-acc-lt); }
+.ol-group-n { color: var(--crt-ink-3); }
+.ol-item {
+  display: flex; align-items: baseline; gap: 8px; width: 100%;
+  padding: 2px 10px 2px 24px; border: 0; background: none; cursor: pointer;
+  font: inherit; color: var(--crt-ink-2); text-align: left;
+}
+.ol-item:hover, .ol-item:focus-visible { background: var(--crt-bg-2); color: var(--crt-ink); outline: none; }
+.ol-item.active { background: color-mix(in srgb, var(--crt-acc) 14%, transparent); color: var(--crt-acc-lt); }
+.ol-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ol-detail { color: var(--crt-ink-3); }
+.ol-line { flex: none; color: var(--crt-ink-3); font-size: 11px; }
+.app-outline-empty { padding: 8px 12px; color: var(--crt-ink-3); }
+
+/* ---------- watch (Code tab, right-hand pane beside the outline) ---------- */
+.app-watch { width: 300px; }
+.app-watch-list.stale .w-row { opacity: .5; }
+.w-row {
+  display: flex; align-items: baseline; gap: 8px; width: 100%;
+  padding: 2px 8px 2px calc(22px + var(--d, 0) * 14px); position: relative;
+  font: inherit; font-size: 13px; color: var(--crt-ink-2); text-align: left;
+  background: none; border: 0;
+}
+button.w-row { cursor: pointer; }
+button.w-row::before { content: '\25B8'; position: absolute; left: calc(8px + var(--d, 0) * 14px); color: var(--crt-acc-dim); }
+button.w-row[aria-expanded="true"]::before { content: '\25BE'; }
+.w-row:hover, button.w-row:focus-visible { background: var(--crt-bg-2); color: var(--crt-ink); outline: none; }
+.w-name { flex: none; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w-val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: pre; color: var(--crt-acc-lt); }
+button.w-row .w-val { color: var(--crt-ink-3); }
+.w-row.changed .w-val { color: var(--crt-led); font-weight: 700; }
+.w-more { color: var(--crt-ink-3); font-style: italic; }
+
+/* ---------- output screen ---------- */
+.app-screen {
+  flex: 1; min-height: 0; overflow: auto;
+  background: #000; padding: 12px;
+  display: flex; align-items: flex-start; justify-content: center;
+  font-family: dosvga8, dosvga, monospace;   /* touches both fonts so the browser loads them */
+}
+.app-screen:focus { outline: none; }
+#gx-canvas { flex: none; background: #000; font-family: dosvga; box-shadow: 0 0 24px color-mix(in srgb, var(--crt-acc) 15%, transparent); }
+#gx-canvas:focus { outline: none; }
+
+/* ---------- messages ---------- */
+#msg-rows tr { cursor: pointer; }
+#msg-rows td:first-child { font-weight: 700; white-space: nowrap; }
+#msg-rows tr.error td:first-child { color: var(--crt-danger); }
+#msg-rows tr.warn td:first-child { color: var(--crt-led); }
+/* the program's own messages: _ECHO, _LOGINFO, _LOGTRACE (and _LOGWARN / _LOGERROR as above) */
+#msg-rows tr.echo td:first-child { color: var(--crt-acc); }
+#msg-rows tr.info td:first-child { color: var(--crt-acc-lt); }
+#msg-rows tr.trace td:first-child { color: var(--crt-ink-3); }
+#msg-rows tr.trace td:last-child { color: var(--crt-ink-3); }
+#msg-rows tr.more td { color: var(--crt-ink-3); font-style: italic; cursor: default; }
+#msg-rows td:nth-child(2) { white-space: nowrap; }
+#msg-rows td:last-child { white-space: pre-wrap; word-break: break-word; }
+.app-js { margin-top: 18px; }
+.app-js summary { cursor: pointer; }
+.app-js pre {
+  margin: 8px 0 0; padding: 10px; max-height: 60vh; overflow: auto;
+  background: var(--crt-bg-well); color: var(--crt-ink-3); font-size: 12px;
+}
+
+/* ---------- files ---------- */
+#fs-path { text-transform: none; max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#fs-drop.drag { outline: 2px dashed var(--crt-acc); outline-offset: -6px; }
+.crt-table th.num, .crt-table td.num { text-align: right; white-space: nowrap; }
+.fs-name { color: var(--crt-ink); word-break: break-all; }
+.fs-name.dir { color: var(--crt-acc-br); cursor: pointer; }
+.fs-name.dir:hover { text-decoration: underline; }
+.fs-menu-btn.crt-btn { height: 22px; padding: 0 8px; font-size: 11px; white-space: nowrap; }
+.fs-menu-btn[aria-expanded="true"] { color: var(--crt-acc-lt); }
+.fs-menu { position: fixed; z-index: 50; min-width: 140px; font-size: 13px; }
+.fs-menu > *:focus { outline: none; background: var(--crt-btn); color: var(--crt-ink); }
+.fs-menu > .danger { color: var(--crt-danger); }
+.fs-menu > * { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; white-space: nowrap; }
+.fs-menu-key { color: var(--crt-ink-3); font-size: 11px; }
+.fs-menu > :disabled { opacity: .45; cursor: not-allowed; background: none; color: var(--crt-ink-2); }
+
+/* toolbar icon buttons (Run, Debug, Stop, File, Outline, Watch) */
+.app-icon-btn.crt-btn { padding: 0 8px; min-width: 34px; gap: 2px; }
+.app-icon { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-caret { font-size: 10px; color: var(--crt-acc-dim); }
+#btn-file[aria-expanded="true"] { color: var(--crt-acc-lt); }
+.fs-menu > .danger:hover, .fs-menu > .danger:focus { background: var(--crt-danger); color: var(--crt-shadow); }
+
+/* ---------- info ---------- */
+.app-info { display: grid; gap: 18px; align-content: start; max-width: 760px; }
+.app-info p { margin: 4px 0 8px; }
+.app-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 4px; }
+.app-row select { width: auto; min-width: 140px; }
+
+/* ---------- record editor ---------- */
+.app-rec-typeinfo { color: var(--crt-ink-3); font-size: 12px; }
+.app-rec-nav .crt-btn { height: 26px; padding: 0 8px; }
+.app-rec-select { width: auto; min-width: 140px; max-width: 320px; height: 26px; }
+.app-rec-count { color: var(--crt-ink-3); font-size: 12px; }
+.app-rec-note { margin: 0 0 12px; }
+.app-rec-fields {
+  display: grid; grid-template-columns: max-content max-content minmax(0, 420px);
+  gap: 4px 14px; align-items: center; max-width: 900px;
+}
+.rec-name { padding-left: calc(var(--d, 0) * 18px); color: var(--crt-ink); white-space: nowrap; }
+.rec-type { color: var(--crt-ink-3); font-size: 12px; white-space: nowrap; }
+.rec-group { grid-column: 1 / -1; display: flex; gap: 10px; align-items: baseline;
+  margin-top: 6px; padding: 2px 0 2px calc(var(--d, 0) * 18px);
+  border-bottom: 1px solid var(--crt-line); color: var(--crt-acc); }
+.rec-group .rec-type { color: var(--crt-acc-dim); }
+.rec-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rec-cell .crt-field { height: 26px; font-family: var(--crt-font-body); }
+.rec-cell .crt-field.bad { border-color: var(--crt-danger); box-shadow: 0 0 0 1px var(--crt-danger); }
+.rec-cell .crt-field.changed { border-color: var(--crt-led); }
+.rec-err { color: var(--crt-danger); font-size: 11px; }
+.app-rec-dialog { width: min(560px, calc(100vw - 32px)); }
+.app-rec-dialog .crt-panel-body { display: flex; flex-direction: column; gap: 6px; }
+.app-rec-dialog .crt-panel-body p { margin: 0; }
+.app-rec-text { width: 100%; box-sizing: border-box; height: auto; min-height: 140px; resize: vertical;
+  font-family: var(--crt-font-body); white-space: pre; }
+.app-rec-info { margin: 4px 0 0; white-space: pre-wrap; }
+@media (max-width: 700px) {
+  .app-rec-fields { grid-template-columns: max-content minmax(0, 1fr); }
+  .app-rec-fields .rec-type { display: none; }
+}
+
+/* ---------- dialog ---------- */
+.app-dialog {
+  padding: 0; width: min(440px, calc(100vw - 32px));
+  color: var(--crt-ink-2); box-shadow: var(--crt-shadow-modal);
+}
+.app-dialog::backdrop { background: #0009; }
+.app-dialog p { margin: 0 0 10px; white-space: pre-wrap; }
+.app-dlg-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* a slim footer, to leave room for the editor and screen */
+.app-footer .crt-footer-inner { max-width: none; margin: 0; padding: 3px 16px; gap: 4px 16px; }
+.app-footer .crt-footer-inner p { margin: 0; font-size: 11px; font-style: italic; text-align: left; color: var(--crt-ink-3); }
+.app-footer .crt-footer-link { padding: 0 8px; font-size: 10px; line-height: 18px; }
+
+/* ---------- small screens ---------- */
+@media (max-width: 700px) {
+  .app-header h1 { font-size: 22px; }
+  .app-bar { padding-top: 8px; }
+  .app-main { padding: 8px 8px 10px; }
+  .app-sep { display: none; }
+  .crt-footer { display: none; }
+  .app-editor .CodeMirror { font-size: 14px; }
+  .app-outline {
+    position: absolute; top: 0; right: 0; bottom: 0; z-index: 5;
+    width: min(280px, 85vw); box-shadow: -8px 0 24px #0008;
+  }
+  .app-watch { width: min(320px, 90vw); }
+}

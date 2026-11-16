@@ -1,0 +1,35 @@
+Reference results from QB64 (C:/Program Files/qb64), built with $CONSOLE:ONLY and SYSTEM added.
+t6: SYSTEM goes before the first SUB.
+
+== t5
+init 5  0  0  0  0 
+[ab   ] 5 
+[abcde] 5 
+[xy   ]
+[1234]
+[q   ]
+[Alexan]
+[Al    ] 6 
+[Bobby ]
+ 1  10 [Al    ] 2  20 [Zed   ]
+ 1  3 
+ 7  1 
+ 99  10 
+ 99  0 
+[hi   ] 2 
+== t6
+[abcde][X  ] 7 
+[longe][q  ][r   ]
+[1234]
+ 8  7 [LON]
+[xy] 0 
+ 120 0 0 120 120 0
+[lZZZZ]
+== t7
+ 1 [one]
+ 2 [two]
+ 3 [ 3             4 ]
+ 1 [a]
+ 2 [b,c]
+ 3 [d]
+onetwo 7 -1 

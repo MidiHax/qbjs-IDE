@@ -1,0 +1,27 @@
+Expected screen (rows 1-21), by QBasic's rules for SPC and TAB.
+QB64's console build ($CONSOLE:ONLY) can't be used for the screen part: it prints TAB(n) as n-1 spaces
+whatever the cursor column. Its file output is right, and the file lines below ({...}) are QB64's.
+TAB(n) moves to column n, or to column n of the next line if the cursor is past it; n < 1 counts as 1
+and n > 80 as n MOD 80. SPC(n) prints n MOD 80 spaces.
+
+[   ]
+          1. Graphics mode: x
+abc      col10
+    col5 next line
+  t3   42          -7
+end with spc
+after
+end with tab
+after2
+spc0
+tab0
+wide     |
+x        tab90
+    no semicolon
+     1    2    3
+{ab   cd  ef}
+{z  w}
+{a             b 5           c}
+done
+*Zorag*
+aBc 5 d

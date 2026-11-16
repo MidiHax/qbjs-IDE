@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QB64 IDE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23061214'/%3E%3Crect x='2' y='11' width='6' height='2' fill='%2354d6e8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="crt.css">
+<link rel="stylesheet" href="qbjs/codemirror/codemirror.min.css">
+<link rel="stylesheet" href="qbjs/codemirror/dialog.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="crt crt-scanlines">
+
+<header class="crt-header app-header">
+  <h1 class="crt-display">QB64 IDE</h1>
+  <div class="app-status">
+    <span id="status-led" class="crt-led"></span>
+    <span id="status-text" class="crt-label">Ready</span>
+    <span id="file-badge" class="crt-badge" title="Program in the editor">untitled.bas</span>
+  </div>
+</header>
+
+<nav class="app-bar">
+  <div class="app-tabs" role="tablist" aria-label="IDE views">
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="code" aria-selected="true">Code</button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="output" aria-selected="false">Output</button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="messages" aria-selected="false">Messages <span id="msg-count" class="app-count" hidden></span></button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="files" aria-selected="false">Files</button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="info" aria-selected="false">Info</button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="fileeditor" aria-selected="false" hidden><span id="fileeditor-label"></span></button>
+    <button type="button" class="crt-btn app-tab" role="tab" data-tab="records" aria-selected="false" hidden title="Record Editor"><span id="records-label"></span></button>
+  </div>
+  <div class="app-actions">
+    <button type="button" id="btn-run" class="crt-btn crt-btn-primary app-icon-btn" title="Run (F5 or Ctrl+R)" aria-label="Run"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg></button>
+    <button type="button" id="btn-debug" class="crt-btn app-icon-btn" title="Debug: run and stop at breakpoints (click a line number to set one, or F9). F8 starts by stopping at the first line." aria-label="Debug"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5a3 3 0 0 1 6 0"/><rect x="7" y="7.5" width="10" height="13" rx="5"/><path d="M12 11v9.5M3 14h4M17 14h4M4 8.5l3 2M20 8.5l-3 2M4 20l3-2.2M20 20l-3-2.2M9.5 4 8 2.5M14.5 4 16 2.5"/></svg></button>
+    <button type="button" id="btn-stop" class="crt-btn crt-btn-danger app-icon-btn" title="Stop (Shift+F5)" aria-label="Stop" disabled><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" fill="currentColor"/></svg></button>
+    <span id="dbg-controls" class="app-dbg" hidden>
+      <button type="button" id="btn-continue" class="crt-btn" title="Continue to the next breakpoint (F5)" disabled>Continue</button>
+      <button type="button" id="btn-step" class="crt-btn" title="Run the line and stop at the next one (F8)" disabled>Step</button>
+      <button type="button" id="btn-pause" class="crt-btn" title="Stop at the next line" disabled>Pause</button>
+    </span>
+    <span id="sep-run" class="app-sep" aria-hidden="true"></span>
+    <button type="button" id="btn-file" class="crt-btn app-icon-btn" title="File: New, Save, Save As, Download, Open" aria-label="File" aria-haspopup="menu" aria-expanded="false"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H16l4 4v11.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M8 3v5h7V3M7.5 20v-6h9v6"/></svg><span class="app-caret" aria-hidden="true">&#9662;</span></button>
+    <!-- the File menu's commands: the menu clicks these, which keep their own state (disabled while running) -->
+    <span id="file-commands" hidden>
+      <button type="button" id="btn-new" title="Start a new program">New</button>
+      <button type="button" id="btn-save" title="Save to the virtual file system (Ctrl+S)">Save</button>
+      <button type="button" id="btn-saveas" title="Save to the virtual file system under a new name (Ctrl+Shift+S)">Save As</button>
+      <button type="button" id="btn-download" title="Download the program as a .bas file">Download</button>
+      <button type="button" id="btn-open" title="Open a .bas file from your computer into the editor">Open</button>
+    </span>
+    <span class="app-sep" aria-hidden="true"></span>
+    <button type="button" id="btn-outline" class="crt-btn app-icon-btn" aria-pressed="true" title="Outline: SUBs, FUNCTIONs, TYPEs, constants, labels and imports" aria-label="Outline"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5" cy="5" r="1.6" fill="currentColor"/><path d="M9.5 5H20"/><circle cx="10" cy="12" r="1.6" fill="currentColor"/><path d="M14 12h6"/><circle cx="10" cy="19" r="1.6" fill="currentColor"/><path d="M14 19h6M5 7.5V19h2.5M5 12h2.5"/></svg></button>
+    <button type="button" id="btn-watch" class="crt-btn app-icon-btn" aria-pressed="false" title="Watch: the program's variables while it is paused in the debugger" aria-label="Watch"><svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+  </div>
+</nav>
+
+<main class="app-main">
+  <!-- Code -->
+  <section class="app-panel crt-panel" id="panel-code" role="tabpanel">
+    <div class="app-code">
+      <div id="editor" class="app-editor"></div>
+      <aside id="outline" class="app-outline" aria-label="Outline">
+        <div class="app-outline-head">
+          <span class="crt-label">Outline</span>
+          <span id="outline-count" class="app-outline-count"></span>
+          <span class="app-grow"></span>
+          <button type="button" id="outline-close" class="crt-btn app-outline-x" title="Hide the outline" aria-label="Hide the outline">&times;</button>
+        </div>
+        <input id="outline-filter" class="crt-field app-outline-filter" type="search" placeholder="Filter" aria-label="Filter the outline" autocomplete="off" spellcheck="false">
+        <div id="outline-list" class="app-outline-list"></div>
+      </aside>
+      <aside id="watch" class="app-outline app-watch" aria-label="Watch" hidden>
+        <div class="app-outline-head">
+          <span class="crt-label">Watch</span>
+          <span id="watch-where" class="app-outline-count"></span>
+          <span class="app-grow"></span>
+          <button type="button" id="watch-close" class="crt-btn app-outline-x" title="Hide the Watch pane" aria-label="Hide the Watch pane">&times;</button>
+        </div>
+        <div id="watch-list" class="app-outline-list app-watch-list" role="tree" aria-label="Variables"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Include file (tabs opened from the outline) -->
+  <section class="app-panel crt-panel" id="panel-include" role="tabpanel" hidden>
+    <div class="app-code">
+      <div id="inc-editor" class="app-editor"></div>
+    </div>
+  </section>
+
+  <!-- Output -->
+  <section class="app-panel crt-panel" id="panel-output" role="tabpanel" hidden>
+    <div class="app-subbar">
+      <span class="crt-label">Screen</span>
+      <span class="app-grow"></span>
+      <button type="button" id="btn-fullscreen" class="crt-btn" title="Show the program screen full screen">Full Screen</button>
+    </div>
+    <div id="gx-container" class="crt-well app-screen" tabindex="0"></div>
+    <div id="gx-footer" hidden></div>
+  </section>
+
+  <!-- Messages -->
+  <section class="app-panel crt-panel" id="panel-messages" role="tabpanel" hidden>
+    <div class="app-scroll">
+      <p id="msg-empty" class="app-empty">No messages. Compiler warnings, runtime errors and what the program writes with <code>_ECHO</code>, <code>_LOGINFO</code>, <code>_LOGWARN</code>, <code>_LOGERROR</code> and <code>_LOGTRACE</code> appear here.</p>
+      <table class="crt-table" id="msg-table" hidden>
+        <thead><tr><th>Type</th><th>Line</th><th>Message</th></tr></thead>
+        <tbody id="msg-rows"></tbody>
+      </table>
+      <details class="app-js" id="js-details">
+        <summary class="crt-label">Compiled JavaScript</summary>
+        <pre id="js-code"></pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- Files -->
+  <section class="app-panel crt-panel" id="panel-files" role="tabpanel" hidden>
+    <div class="app-subbar">
+      <button type="button" id="fs-up" class="crt-btn" title="Up one folder">&#8593;</button>
+      <span id="fs-path" class="crt-badge">/</span>
+      <span class="app-grow"></span>
+      <button type="button" id="fs-newfolder" class="crt-btn">New Folder</button>
+      <button type="button" id="fs-newfile" class="crt-btn">New File</button>
+      <button type="button" id="fs-upload" class="crt-btn" title="Add files from your computer to this folder">Upload Files</button>
+      <button type="button" id="fs-zip-down" class="crt-btn" title="Download every file as one ZIP">Download Package</button>
+      <button type="button" id="fs-zip-up" class="crt-btn" title="Add the contents of a ZIP (overwrites same-named files)">Upload Package</button>
+      <button type="button" id="fs-clear" class="crt-btn crt-btn-danger" title="Delete every file">Clear All</button>
+    </div>
+    <div class="app-scroll" id="fs-drop">
+      <table class="crt-table">
+        <thead><tr><th>Name</th><th class="num">Size</th><th>Actions</th></tr></thead>
+        <tbody id="fs-rows"></tbody>
+      </table>
+      <p id="fs-empty" class="app-empty" hidden>This folder is empty. Drop files here or use Upload Files.</p>
+      <p class="app-note">Files are stored in this browser only. Programs can read and write them with <code>OPEN</code>, <code>PRINT #</code>, <code>INPUT #</code>, <code>KILL</code>, <code>MKDIR</code> and so on.</p>
+    </div>
+  </section>
+
+  <!-- Info -->
+  <section class="app-panel crt-panel" id="panel-info" role="tabpanel" hidden>
+    <div class="app-scroll app-info">
+      <div class="crt-legend-box">
+        <span class="crt-legend">Display</span>
+        <div class="app-row">
+          <label class="crt-label" for="hue-select">Phosphor</label>
+          <select id="hue-select" class="crt-field">
+            <option value="190">Teal</option>
+            <option value="140">Green</option>
+            <option value="35">Amber</option>
+            <option value="280">Violet</option>
+            <option value="330">Pink</option>
+          </select>
+          <label class="crt-switch"><input type="checkbox" id="scan-toggle" checked><span class="crt-switch-track"></span> Scanlines</label>
+        </div>
+      </div>
+      <div class="crt-legend-box">
+        <span class="crt-legend">Editor</span>
+        <div class="app-row">
+          <label class="crt-switch"><input type="checkbox" id="caps-toggle" checked><span class="crt-switch-track"></span> Capitalize keywords</label>
+        </div>
+        <p class="app-note">Writes keywords such as <code>PRINT</code> and <code>LEFT$</code> in capitals as you type, as the QB64 IDE does. Strings, comments, <code>DATA</code> and <code>$IF JAVASCRIPT</code> blocks are left alone.</p>
+      </div>
+      <div class="crt-legend-box">
+        <span class="crt-legend">About</span>
+        <p>A browser IDE for writing and running QB64 / QBasic programs. Programs are compiled to JavaScript by
+          <a href="https://github.com/boxgaming/qbjs" target="_blank" rel="noopener">QBJS</a> and run entirely in this page.</p>
+        <p>QBJS supports most of QBasic and a large part of QB64, but not all of it. Check the
+          <a href="https://github.com/boxgaming/qbjs/wiki/Supported-Keywords" target="_blank" rel="noopener">supported keywords</a> and
+          <a href="https://github.com/boxgaming/qbjs/wiki/QBasic-Language-Support" target="_blank" rel="noopener">language notes</a>.
+          Programs that call Windows or C libraries won't run.</p>
+      </div>
+      <div class="crt-legend-box">
+        <span class="crt-legend">Keys</span>
+        <table class="crt-table">
+          <tr><td>Ctrl+R / F5</td><td>Run</td></tr>
+          <tr><td>Shift+F5</td><td>Stop</td></tr>
+          <tr><td>Ctrl+S</td><td>Save</td></tr>
+          <tr><td>Ctrl+F</td><td>Find in the editor</td></tr>
+        </table>
+      </div>
+      <div class="crt-legend-box">
+        <span class="crt-legend">Credits</span>
+        <p>QBJS &copy; 2022-2026 boxgaming, MIT License (<a href="qbjs/LICENSE" target="_blank">license</a>,
+          <a href="qbjs/3rd-party-licenses.html" target="_blank">third-party licenses</a>).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Record Editor (RANDOM files, opened from Files) -->
+  <section class="app-panel crt-panel" id="panel-records" role="tabpanel" hidden>
+    <div class="app-subbar">
+      <span id="rec-path" class="crt-badge"></span>
+      <span id="rec-typeinfo" class="app-rec-typeinfo"></span>
+      <span class="app-grow"></span>
+      <button type="button" id="rec-retype" class="crt-btn" title="Read the file with another TYPE or record length">Change TYPE</button>
+      <button type="button" id="rec-save" class="crt-btn crt-btn-primary" title="Write the changes to the file (Ctrl+S)">Save File</button>
+      <button type="button" id="rec-close" class="crt-btn">Close</button>
+    </div>
+    <div class="app-subbar app-rec-nav">
+      <label class="crt-label" for="rec-select">Record</label>
+      <button type="button" id="rec-prev" class="crt-btn" title="Previous record" aria-label="Previous record">&#9664;</button>
+      <select id="rec-select" class="crt-field app-rec-select"></select>
+      <button type="button" id="rec-next" class="crt-btn" title="Next record" aria-label="Next record">&#9654;</button>
+      <span id="rec-count" class="app-rec-count"></span>
+      <span class="app-grow"></span>
+      <button type="button" id="rec-add" class="crt-btn" title="Add an empty record at the end of the file">Add Record</button>
+    </div>
+    <div class="app-scroll">
+      <p id="rec-note" class="app-note app-rec-note" hidden></p>
+      <div id="rec-fields" class="app-rec-fields"></div>
+    </div>
+  </section>
+
+  <!-- File editor (opened from Files) -->
+  <section class="app-panel crt-panel" id="panel-fileeditor" role="tabpanel" hidden>
+    <div class="app-subbar">
+      <span id="fileeditor-path" class="crt-badge"></span>
+      <span class="app-grow"></span>
+      <button type="button" id="fe-save" class="crt-btn crt-btn-primary">Save File</button>
+      <button type="button" id="fe-close" class="crt-btn">Close</button>
+    </div>
+    <div id="file-editor" class="app-editor"></div>
+  </section>
+</main>
+
+<footer class="crt-footer app-footer">
+  <div class="crt-footer-inner">
+    <p>Runs entirely in your browser. Nothing is uploaded.</p>
+    <nav aria-label="Project links">
+      <a class="crt-footer-link" href="https://github.com/boxgaming/qbjs/wiki" target="_blank" rel="noopener">QBJS Docs</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- Dialogs -->
+<dialog id="dlg" class="crt-panel app-dialog">
+  <form method="dialog">
+    <div class="crt-titlebar"><span id="dlg-title"></span></div>
+    <div class="crt-panel-body">
+      <p id="dlg-msg"></p>
+      <input id="dlg-input" class="crt-field" autocomplete="off" spellcheck="false">
+      <p id="dlg-error" class="app-error" hidden></p>
+      <div class="app-dlg-buttons">
+        <button value="cancel" id="dlg-cancel" class="crt-btn" formnovalidate>Cancel</button>
+        <button value="ok" id="dlg-ok" class="crt-btn crt-btn-primary">OK</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="rec-dlg" class="crt-panel app-dialog app-rec-dialog">
+  <form method="dialog">
+    <div class="crt-titlebar"><span>Record Editor</span></div>
+    <div class="crt-panel-body">
+      <p id="rec-dlg-file"></p>
+      <label class="crt-label" for="rec-dlg-type">Record TYPE</label>
+      <select id="rec-dlg-type" class="crt-field"></select>
+      <div id="rec-dlg-custom" hidden>
+        <label class="crt-label" for="rec-dlg-text">TYPE definition. Paste the record's TYPE, after any TYPEs nested in it; the last TYPE is the record.</label>
+        <textarea id="rec-dlg-text" class="crt-field app-rec-text" rows="8" spellcheck="false" placeholder="TYPE UNAME&#10;    First AS STRING * 10&#10;    Last AS STRING * 15&#10;END TYPE"></textarea>
+      </div>
+      <label class="crt-label" for="rec-dlg-len">Record length (the LEN = in OPEN)</label>
+      <input id="rec-dlg-len" class="crt-field" type="number" min="1" max="32767" step="1">
+      <p id="rec-dlg-info" class="app-note app-rec-info"></p>
+      <p id="rec-dlg-error" class="app-error" hidden></p>
+      <div class="app-dlg-buttons">
+        <button value="cancel" id="rec-dlg-cancel" class="crt-btn" formnovalidate>Cancel</button>
+        <button value="ok" id="rec-dlg-ok" class="crt-btn crt-btn-primary">Open</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<input type="file" id="open-input" accept=".bas,.bi,.bm,.txt" hidden>
+<input type="file" id="upload-input" multiple hidden>
+<input type="file" id="zip-input" accept=".zip" hidden>
+
+<script src="qbjs/codemirror/codemirror.min.js"></script>
+<script src="qbjs/codemirror/qb-lang.js"></script>
+<script src="qbjs/codemirror/active-line.js"></script>
+<script src="qbjs/codemirror/dialog.js"></script>
+<script src="qbjs/codemirror/searchcursor.js"></script>
+<script src="qbjs/codemirror/search.js"></script>
+<script src="qbjs/util/pako.2.1.0.min.js"></script>
+<script src="qbjs/util/jszip.min.js"></script>
+<script src="qbjs/vfs.js"></script>
+<script src="gx/gx.js"></script>
+<script src="qbjs/qb.js"></script>
+<script src="qbjs/qb2js.js"></script>
+<script src="qbjs/runner.js"></script>
+<script src="records.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "main": "visits.bas",
+  "title": "Visit counter",
+  "args": "--demo"
+}
