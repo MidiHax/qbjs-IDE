@@ -16,10 +16,13 @@ There are two ways in:
 
 Both run the program in a sandboxed frame, so it can't touch the page around it.
 
-**See it working:** `embed/demo.html` shows every form below, each with the HTML that makes
-it. Open it from a web server (see [Hosting](#hosting-the-engine)), not as a file.
+**See it working:** the [demo page](https://midihax.github.io/qbjs-IDE/embed/demo.html) shows
+every form below, each with the HTML that makes it. A local copy (`embed/demo.html`) must be
+opened from a web server (see [Hosting](#hosting-the-engine)), not as a file.
 
-In the examples, `https://HOST/qb64-ide/` stands for wherever the engine is served.
+The examples load the engine from `https://midihax.github.io/qbjs-IDE/`, which any page may
+use. To serve your own copy, see [Hosting](#hosting-the-engine) and put its address there
+instead.
 
 
 The `<qb-program>` element
@@ -28,7 +31,7 @@ The `<qb-program>` element
 Load the script once, then use the element as often as you like:
 
 ```html
-<script src="https://HOST/qb64-ide/embed/qb-embed.js" defer></script>
+<script src="https://midihax.github.io/qbjs-IDE/embed/qb-embed.js" defer></script>
 ```
 
 ### The program written in the page
@@ -204,7 +207,7 @@ A plain `<iframe>` or a link
 Where the page can't load scripts, use `embed/player.html` directly:
 
 ```html
-<iframe src="https://HOST/qb64-ide/embed/player.html?src=https://example.com/game.zip&autostart&controls"
+<iframe src="https://midihax.github.io/qbjs-IDE/embed/player.html?src=https://example.com/game.zip&autostart&controls"
         width="640" height="430"
         sandbox="allow-scripts allow-pointer-lock"
         allow="fullscreen; gamepad; autoplay"></iframe>
@@ -239,7 +242,7 @@ Some differences from the element:
 A program short enough can be put in the link itself, so nothing is stored anywhere:
 
 ```
-https://HOST/qb64-ide/embed/player.html#autostart&controls&code=VY89C4MwGIT3...
+https://midihax.github.io/qbjs-IDE/embed/player.html#autostart&controls&code=VY89C4MwGIT3...
 ```
 
 Opened on its own, the link fills the window and the tab takes the program's `_TITLE`. The same
@@ -258,7 +261,7 @@ function encodeCode(text) {
   for (const b of bytes) bin += String.fromCharCode(b);
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-const link = 'https://HOST/qb64-ide/embed/player.html#autostart&code=' + encodeCode(source);
+const link = 'https://midihax.github.io/qbjs-IDE/embed/player.html#autostart&code=' + encodeCode(source);
 ```
 
 In Node: `zlib.deflateRawSync(Buffer.from(source)).toString('base64')`, with the same
@@ -320,7 +323,8 @@ needs:
   are cross-origin to it. GitHub Pages sends this header; elsewhere, set it in the server's
   configuration.
 
-Pages that embed programs then point at that copy: `<script src="https://HOST/qb64-ide/embed/qb-embed.js">`.
+Pages that embed programs then point at that copy instead of `https://midihax.github.io/qbjs-IDE/`:
+`<script src="https://your.server/path/embed/qb-embed.js">`.
 
 
 Limits
